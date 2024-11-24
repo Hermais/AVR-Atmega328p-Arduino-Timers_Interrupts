@@ -145,7 +145,6 @@ ISR(TIMER2_OVF_vect) {
             enable_buttons = true;
             customDigitalWrite(LED_DEBOUNCE_PIN, LOW);
         }
-        TCNT2 = 12; // Preload timer
     }
     CLEAR_BIT(TIFR2, TOV2); // Clear overflow flag
 }
