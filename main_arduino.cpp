@@ -20,7 +20,7 @@
 
 uint16_t timer_0_multiplier_runner = 0;
 bool enable_buttons = true;
-uint8_t debounce_counter = 0;
+uint8_t timer_2_multiplier_debounce_counter = 0;
 
 // Custom digitalWrite implementation
 void customDigitalWrite(uint8_t pin, uint8_t value) {
@@ -139,9 +139,9 @@ void toggle_led(int led_pin) {
 ISR(TIMER2_OVF_vect) {
     if (!enable_buttons) {
         customDigitalWrite(LED_DEBOUNCE_PIN, HIGH);
-        debounce_counter++;
-        if (debounce_counter >= TIMER_2_MULTIPLIER) {
-            debounce_counter = 0;
+        timer_2_multiplier_debounce_counter++;
+        if (timer_2_multiplier_debounce_counter >= TIMER_2_MULTIPLIER) {
+            timer_2_multiplier_debounce_counter = 0;
             enable_buttons = true;
             customDigitalWrite(LED_DEBOUNCE_PIN, LOW);
         }
