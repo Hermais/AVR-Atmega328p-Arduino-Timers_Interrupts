@@ -22,6 +22,12 @@ uint16_t timer_0_multiplier_runner = 0;
 bool enable_buttons = true;
 uint8_t timer_2_multiplier_debounce_counter = 0;
 
+
+template<typename... Args>
+void clear_all(Args&... args) {
+    ((args = 0), ...);
+}
+
 // Custom digitalWrite implementation
 void customDigitalWrite(uint8_t pin, uint8_t value) {
     if (pin >= 0 && pin <= 7) { // Port D
@@ -62,26 +68,33 @@ uint8_t customDigitalRead(uint8_t pin) {
 }
 
 void init_timer_counter_0() {
-    TCCR0A = (1 << WGM01); // Set CTC mode
-    TCCR0B = (1 << CS02) | (1 << CS00); // Set prescaler to 1024
+    clear_all(TCCR0A, TCCR0B, TIMSK0, TCNT0);
+    SET_BIT(TCCR0A, WGM01); // Set CTC mode
+    SET_BIT(TCCR0B, CS02); // Set prescaler to 1024
+    SET_BIT(TCCR0B, CS00);
     OCR0A = OCR0A_INIT; // Set compare value
-    TCNT0 = 0; // Reset counter value
-    TIMSK0 = (1 << OCIE0A); // Enable compare match interrupt
+    SET_BIT(TIMSK0, OCIE0A); // Enable compare match interrupt
+
 }
 
 void init_timer_counter_1() {
+    clear_all(TCCR1A, TCCR1B);
     // Set Fast PWM mode 10-bit
-    TCCR1A |= (1 << WGM11) | (1 << WGM10);
-    TCCR1B |= (1 << WGM12);
+    SET_BIT(TCCR1A, WGM11);
+    SET_BIT(TCCR1A, WGM10);
+    SET_BIT(TCCR1B, WGM12);
     OCR1A = OCR1A_INIT; // Set compare value
-    TCCR1A |= (1 << COM1A1); // Set non-inverting mode
-    TCCR1B |= (1 << CS11) | (1 << CS10); // Set prescaler to 64
+    SET_BIT(TCCR1A, COM1A1); // Set non-inverting mode
+    SET_BIT(TCCR1B, CS11);
+    SET_BIT(TCCR1B, CS10); // Set prescaler to 64
 }
 
 void init_timer_counter_2() {
-    TCCR2A = 0; // Normal mode
-    TCCR2B = (1 << CS22) | (1 << CS21) | (1 << CS20); // Set prescaler to 1024
-    TIMSK2 = (1 << TOIE2); // Enable overflow interrupt
+    clear_all(TCCR2A, TCCR2B, TIMSK2, TCNT2);
+    SET_BIT(TCCR2B, CS22); // Set prescaler to 1024
+    SET_BIT(TCCR2B, CS21);
+    SET_BIT(TCCR2B, CS20);
+    SET_BIT(TIMSK2, TOIE2); // Enable overflow interrupt
 }
 
 void increase_brightness() {
