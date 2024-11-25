@@ -23,10 +23,15 @@ bool enable_buttons = true;
 uint8_t timer_2_multiplier_debounce_counter = 0;
 
 
-template<typename... Args>
-void clear_all(Args&... args) {
-    ((args = 0), ...);
+// Clears all provided registers by setting them to 0.
+template<typename... Registers> // A variadic template (generic) that accepts many args. 
+// Values here are passed by refrence (a short hand method to pointer manipulation).
+void clear_all(Registers&... registers) {
+    // fold expression that applies for each argument the operation of setting them to zero.
+    ((registers = 0), ...);
 }
+
+
 
 // Custom digitalWrite implementation
 void customDigitalWrite(uint8_t pin, uint8_t value) {
